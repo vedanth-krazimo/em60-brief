@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EM-60 — AI Transformation Animations Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: #080808; color: #F0F0F0; font-family: 'Barlow', sans-serif; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #0A0A0A; }
+  ::-webkit-scrollbar-thumb { background: #C9A96E; border-radius: 2px; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes ticker { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+  @keyframes act2pulse { 0%,100% { box-shadow:0 0 20px rgba(201,169,110,.2),inset 0 0 20px rgba(201,169,110,.04); } 50% { box-shadow:0 0 50px rgba(201,169,110,.5),inset 0 0 30px rgba(201,169,110,.1); } }
+  @keyframes progressFill { from { width:0; } to { width:var(--pct); } }
+  @keyframes scandown { 0% { top:-4px; } 100% { top:100%; } }
+
+  .fade-up { animation: fadeUp .6s ease forwards; }
+
+  /* ── TICKER ── */
+  .ticker-wrap { background:#C9A96E; height:28px; overflow:hidden; display:flex; align-items:center; }
+  .ticker-inner { display:flex; white-space:nowrap; animation:ticker 35s linear infinite; }
+  .ticker-inner span { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; color:#0A0A0A; letter-spacing:.15em; padding-right:60px; }
+
+  /* ── GRID BG ── */
+  .grid-bg {
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image: linear-gradient(rgba(201,169,110,.025) 1px,transparent 1px),
+                      linear-gradient(90deg,rgba(201,169,110,.025) 1px,transparent 1px);
+    background-size:60px 60px;
+  }
+
+  /* ── LAYOUT ── */
+  .page { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 24px 100px; }
+
+  /* ── SECTION LABEL ── */
+  .sec-label { display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.25em; color:#8A6E3A; text-transform:uppercase; margin-bottom:14px; }
+  .sec-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,#8A6E3A,transparent); }
+
+  .divider { height:1px; background:linear-gradient(90deg,transparent,rgba(201,169,110,.2),transparent); margin:0 0 72px; }
+
+  /* ── HERO ── */
+  .hero { padding:64px 0 52px; border-bottom:1px solid #1A1A1A; margin-bottom:72px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px; }
+  .hero-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(52px,8vw,90px); line-height:.9; letter-spacing:.03em; margin-bottom:16px; }
+  .hero-title .line1 { display:block; background:linear-gradient(135deg,#F0F0F0 40%,#C9A96E); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero-title .line2 { display:block; color:#C9A96E; }
+  .hero-sub { font-family:'Barlow Condensed',sans-serif; font-size:18px; color:#6A6A6A; letter-spacing:.1em; margin-bottom:28px; font-weight:300; }
+
+  .badge { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; padding:5px 13px; display:inline-flex; align-items:center; gap:6px; }
+  .badge-gold { background:rgba(201,169,110,.12); border:1px solid rgba(201,169,110,.4); color:#C9A96E; }
+  .badge-orange { background:rgba(255,150,50,.1); border:1px solid rgba(255,150,50,.3); color:#FF9632; }
+  .badge-red { background:rgba(255,77,77,.1); border:1px solid rgba(255,77,77,.3); color:#FF4D4D; }
+  .dot-blink { width:6px; height:6px; border-radius:50%; background:#FF9632; animation:blink 1.5s ease infinite; display:inline-block; }
+
+  .tool-badges { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+  .tool-badge { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; padding:5px 14px; font-weight:500; }
+
+  .hero-meta { text-align:right; min-width:190px; }
+  .hero-date-label { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6A6A6A; letter-spacing:.12em; margin-bottom:4px; }
+  .hero-date { font-family:'Bebas Neue',sans-serif; font-size:52px; color:#C9A96E; line-height:1; }
+  .hero-date-year { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6A6A6A; letter-spacing:.12em; }
+  .hero-deliverable { margin-top:20px; padding:14px 20px; border:1px solid rgba(201,169,110,.3); background:rgba(201,169,110,.04); }
+  .hd-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#8A6E3A; letter-spacing:.12em; margin-bottom:4px; }
+  .hd-num { font-family:'Bebas Neue',sans-serif; font-size:38px; color:#F0F0F0; line-height:1; }
+  .hd-note { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6A6A6A; }
+
+  /* ── 3 ACTS ── */
+  .acts-grid { display:grid; grid-template-columns:1fr 36px 1fr 36px 1fr; gap:0; align-items:stretch; margin-bottom:72px; }
+  .act-arrow { display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:26px; color:rgba(201,169,110,.4); }
+  .act { padding:28px; position:relative; overflow:hidden; }
+  .act-before { background:#111; border:1px solid #333; }
+  .act-brand  { background:rgba(201,169,110,.035); border:1px solid #C9A96E; animation:act2pulse 2.5s ease-in-out infinite; }
+  .act-after  { background:#111; border:1px solid #33554433; border-color:#4ECCA355; }
+  .act-scan { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(201,169,110,.4),transparent); animation:scandown 3s linear infinite; pointer-events:none; }
+  .act-num  { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; margin-bottom:4px; }
+  .act-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:.05em; line-height:1; margin-bottom:12px; }
+  .act-time { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.15em; padding:3px 10px; display:inline-block; margin-bottom:16px; }
+  .act-items { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .act-items li { font-family:'Barlow',sans-serif; font-size:13px; display:flex; gap:8px; align-items:flex-start; }
+  .act-items li span.bullet { flex-shrink:0; margin-top:1px; }
+  .act-tag { margin-top:18px; font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:.25em; font-weight:600; }
+
+  /* ── MRIDUL DIRECTIONS ── */
+  .directions-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px; margin-bottom:72px; }
+  .direction-card { background:#111; padding:20px 24px; }
+  .dir-num { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; margin-bottom:10px; }
+  .dir-quote { font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:600; color:#F0F0F0; line-height:1.4; margin-bottom:10px; }
+  .dir-context { font-family:'Barlow',sans-serif; font-size:12px; color:#6A6A6A; line-height:1.6; }
+
+  /* ── BRAND SYSTEMS ── */
+  .brands-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-bottom:4px; }
+  .brand-panel { padding:32px; }
+  .brand-maxoris { background:#0D0D0D; border:1px solid rgba(201,169,110,.3); }
+  .brand-celesta  { background:#100E0C; border:1px solid rgba(212,175,127,.3); }
+  .brand-name { font-family:'Bebas Neue',sans-serif; font-size:50px; letter-spacing:.05em; line-height:1; margin-bottom:4px; }
+  .brand-subtitle { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:.2em; font-weight:300; margin-bottom:24px; }
+  .swatches { display:flex; gap:8px; margin-bottom:24px; }
+  .swatch { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .swatch-block { width:36px; height:36px; border:1px solid rgba(255,255,255,.1); }
+  .swatch-hex { font-family:'IBM Plex Mono',monospace; font-size:8px; }
+  .brand-attrs { display:flex; flex-direction:column; gap:9px; margin-bottom:22px; }
+  .brand-attr { display:flex; gap:12px; }
+  .attr-key { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.12em; width:50px; flex-shrink:0; padding-top:2px; }
+  .attr-val { font-family:'Barlow',sans-serif; font-size:12px; line-height:1.5; }
+  .zone-section { margin-bottom:12px; }
+  .zone-label { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.15em; margin-bottom:8px; }
+  .zones { display:flex; flex-wrap:wrap; gap:6px; }
+  .zone-pill { font-family:'IBM Plex Mono',monospace; font-size:10px; padding:3px 9px; }
+
+  .brand-warning { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#FF4D4D; text-align:center; padding:12px; border:1px solid rgba(255,77,77,.2); background:rgba(255,77,77,.03); letter-spacing:.15em; margin-bottom:72px; }
+
+  /* ── TOOL STACK ── */
+  .tool-layers { display:flex; flex-direction:column; gap:2px; margin-bottom:72px; }
+  .tool-layer { display:grid; grid-template-columns:190px 1fr; background:#111; border:1px solid #1A1A1A; }
+  .layer-label { padding:22px 20px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid; }
+  .layer-num { font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:300; line-height:1; }
+  .layer-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.05em; line-height:1; }
+  .layer-sub { font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:.1em; margin-top:3px; color:#6A6A6A; }
+  .layer-items { padding:18px 22px; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .layer-item { padding:14px 16px; background:#161616; border:1px solid #222; flex:1; min-width:170px; }
+  .layer-item-name { font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:600; letter-spacing:.05em; margin-bottom:4px; }
+  .layer-item-note { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6A6A6A; line-height:1.6; }
+
+  /* ── SOURCE IMAGES ── */
+  .tab-btns { display:flex; gap:8px; margin-bottom:18px; }
+  .tab-btn { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:.1em; padding:8px 24px; cursor:pointer; border:none; transition:all .2s; }
+  .patients-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:12px; margin-bottom:12px; }
+  .patient-card { background:#111; border:1px solid #1A1A1A; position:relative; overflow:hidden; cursor:default; }
+  .patient-card.recommended { border-color:var(--accent); }
+  .patient-rec { position:absolute; top:0; right:0; font-family:'IBM Plex Mono',monospace; font-size:8px; padding:3px 9px; letter-spacing:.15em; font-weight:600; color:#080808; }
+  .patient-thumb { height:110px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+  .patient-thumb-bg { position:absolute; inset:0; }
+  .patient-thumb-label { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:.1em; position:relative; z-index:1; opacity:.4; }
+  .patient-info { padding:10px 13px; }
+  .patient-name { font-family:'IBM Plex Mono',monospace; font-size:10px; margin-bottom:4px; letter-spacing:.06em; }
+  .patient-meta { display:flex; justify-content:space-between; align-items:center; }
+  .patient-type { font-family:'Barlow',sans-serif; font-size:11px; color:#6A6A6A; }
+  .patient-shots { font-family:'Bebas Neue',sans-serif; font-size:18px; }
+
+  .path-note { padding:12px 16px; background:rgba(201,169,110,.04); border:1px solid rgba(201,169,110,.12); font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6A6A6A; margin-bottom:72px; }
+  .path-note .gold { color:#C9A96E; }
+
+  /* ── CHECKLIST ── */
+  .check-stats { display:flex; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .check-stat { padding:12px 20px; background:#111; border:1px solid #1A1A1A; flex:1; min-width:120px; }
+  .check-stat.done-stat { border-color:#4ECCA344; }
+  .check-stat-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6A6A6A; letter-spacing:.1em; margin-bottom:4px; }
+  .check-stat-num { font-family:'Bebas Neue',sans-serif; font-size:34px; line-height:1; }
+  .progress-bar-wrap { flex:2; min-width:200px; padding:12px 20px; background:#111; border:1px solid #1A1A1A; display:flex; flex-direction:column; justify-content:center; }
+  .progress-bar-bg { height:8px; background:#222; position:relative; overflow:hidden; }
+  .progress-bar-fill { position:absolute; left:0; top:0; height:100%; background:linear-gradient(90deg,#C9A96E,#4ECCA3); transition:width .4s ease; }
+
+  .checklist { display:flex; flex-direction:column; gap:6px; margin-bottom:72px; }
+  .check-item { display:flex; gap:14px; align-items:center; padding:14px 18px; background:#111; border:1px solid #1A1A1A; cursor:pointer; transition:all .2s; user-select:none; }
+  .check-item:hover { background:#141414; }
+  .check-item.is-done { background:rgba(78,204,163,.04); border-color:rgba(78,204,163,.15); }
+  .check-box { width:20px; height:20px; border:2px solid #4A4A4A; background:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
+  .check-box.is-done { border-color:#4ECCA3; background:#4ECCA3; }
+  .check-box .tick { color:#080808; font-size:12px; font-weight:700; }
+  .check-text { flex:1; }
+  .check-main { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:600; letter-spacing:.03em; transition:all .2s; }
+  .check-main.done { text-decoration:line-through; color:#6A6A6A; }
+  .check-note { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#4A4A4A; margin-top:2px; }
+  .check-tag { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.15em; padding:2px 8px; flex-shrink:0; }
+  .tag-required { background:rgba(201,169,110,.1); color:#C9A96E; }
+  .tag-optional { background:#161616; color:#6A6A6A; }
+
+  /* ── PROMPTS ── */
+  .prompts-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .prompt-card { }
+  .prompt-header { padding:13px 18px; border-bottom:1px solid; display:flex; justify-content:space-between; align-items:center; }
+  .prompt-name { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:.1em; }
+  .copy-btn { font-family:'IBM Plex Mono',monospace; font-size:10px; padding:4px 12px; cursor:pointer; border:none; letter-spacing:.1em; transition:all .2s; }
+  .prompt-body { padding:20px; font-family:'IBM Plex Mono',monospace; font-size:11px; line-height:1.9; word-break:break-word; }
+
+  .prompt-tips { padding:12px 16px; background:#111; border:1px solid #1A1A1A; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6A6A6A; display:flex; gap:20px; flex-wrap:wrap; }
+  .tip-gold { color:#C9A96E; }
+
+  /* ── FOOTER ── */
+  .footer { border-top:1px solid #1A1A1A; padding-top:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .footer span { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3A3A3A; letter-spacing:.12em; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .acts-grid { grid-template-columns:1fr; }
+    .act-arrow { display:none; }
+    .brands-grid { grid-template-columns:1fr; }
+    .prompts-grid { grid-template-columns:1fr; }
+    .hero { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>EM-60 · AI TRANSFORMATION ANIMATIONS · MAXORIS × CELESTA · EM SPRINT 2 · DUE TONIGHT · FEB 20 2026 ·</span>
+    <span>EM-60 · AI TRANSFORMATION ANIMATIONS · MAXORIS × CELESTA · EM SPRINT 2 · DUE TONIGHT · FEB 20 2026 ·</span>
+    <span>EM-60 · AI TRANSFORMATION ANIMATIONS · MAXORIS × CELESTA · EM SPRINT 2 · DUE TONIGHT · FEB 20 2026 ·</span>
+    <span>EM-60 · AI TRANSFORMATION ANIMATIONS · MAXORIS × CELESTA · EM SPRINT 2 · DUE TONIGHT · FEB 20 2026 ·</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <div class="hero fade-up">
+    <div style="flex:1">
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <span class="badge badge-gold">EM-60</span>
+        <span class="badge badge-orange"><span class="dot-blink"></span> IN PROGRESS</span>
+        <span class="badge badge-red">DUE TONIGHT</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="line1">AI TRANSFORMATION</span>
+        <span class="line2">ANIMATIONS</span>
+      </h1>
+      <p class="hero-sub">MAXORIS × CELESTA — Before/After Reels for @jasonemermd</p>
+      <div class="tool-badges">
+        <span class="tool-badge" style="background:rgba(232,67,147,.1);border:1px solid rgba(232,67,147,.35);color:#E84393;">KLING</span>
+        <span class="tool-badge" style="background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.35);color:#6C63FF;">Seedance 2.0</span>
+        <span class="tool-badge" style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);color:#00D4FF;">Higgsfield</span>
+        <span class="tool-badge" style="background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.3);color:#FF4D4D;">CapCut</span>
+        <span class="tool-badge" style="background:rgba(78,204,163,.08);border:1px solid rgba(78,204,163,.3);color:#4ECCA3;">Midjourney</span>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-date-label">EM SPRINT 2</div>
+      <div class="hero-date">FEB 20</div>
+      <div class="hero-date-year">2026</div>
+      <div class="hero-deliverable">
+        <div class="hd-label">DELIVERABLES</div>
+        <div class="hd-num">3–5 VIDEOS</div>
+        <div class="hd-note">samples · client approval only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 02: 3-ACT STRUCTURE ── -->
+  <div class="sec-label"><span>02</span>THE FORMAT — 3-ACT ANIMATION STRUCTURE</div>
+
+  <div class="acts-grid">
+    <!-- Act 1 -->
+    <div class="act act-before">
+      <div class="act-num" style="color:#888;">ACT 01</div>
+      <div class="act-name" style="color:#F0F0F0;">BEFORE</div>
+      <span class="act-time" style="color:#888;background:rgba(136,136,136,.1);">0:00–0:02</span>
+      <ul class="act-items">
+        <li><span class="bullet" style="color:#888;">›</span><span style="color:#888;">Real patient photo — start frame</span></li>
+        <li><span class="bullet" style="color:#888;">›</span><span style="color:#888;">Slow zoom in on face / body</span></li>
+        <li><span class="bullet" style="color:#888;">›</span><span style="color:#888;">Building tension — deep bass</span></li>
+        <li><span class="bullet" style="color:#888;">›</span><span style="color:#888;">Neutral, natural lighting</span></li>
+      </ul>
+      <div class="act-tag" style="color:rgba(136,136,136,.5);">THE ORIGIN</div>
+    </div>
+
+    <div class="act-arrow">→</div>
+
+    <!-- Act 2 -->
+    <div class="act act-brand">
+      <div class="act-scan"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="act-num" style="color:#C9A96E;">ACT 02</div>
+        <div class="act-name" style="color:#C9A96E;">BRAND<br>TRANSFORMATION</div>
+        <span class="act-time" style="color:#C9A96E;background:rgba(201,169,110,.1);">0:04–0:11 · HERO MOMENT</span>
+        <ul class="act-items">
+          <li><span class="bullet" style="color:#C9A96E;">›</span><span>Morph to MAXORIS or CELESTA ideal</span></li>
+          <li><span class="bullet" style="color:#C9A96E;">›</span><span>Zone overlays light up — Broweon, Zygmara…</span></li>
+          <li><span class="bullet" style="color:#C9A96E;">›</span><span>Zone map diagnostic UI — face/body scan grid lights up</span></li>
+          <li><span class="bullet" style="color:#C9A96E;">›</span><span>MAXORIS / CELESTA wordmark appears</span></li>
+          <li><span class="bullet" style="color:#C9A96E;">›</span><span>Futuristic UI scan lines + floating zone callouts</span></li>
+        </ul>
+        <div class="act-tag" style="color:rgba(201,169,110,.6);">THE HERO MOMENT</div>
+      </div>
+    </div>
+
+    <div class="act-arrow">→</div>
+
+    <!-- Act 3 -->
+    <div class="act act-after">
+      <div class="act-num" style="color:#4ECCA3;">ACT 03</div>
+      <div class="act-name" style="color:#4ECCA3;">AFTER</div>
+      <span class="act-time" style="color:#4ECCA3;background:rgba(78,204,163,.08);">0:11–0:20</span>
+      <ul class="act-items">
+        <li><span class="bullet" style="color:#4ECCA3;">›</span><span style="color:#aaa;">Morph back to real after photo</span></li>
+        <li><span class="bullet" style="color:#4ECCA3;">›</span><span style="color:#aaa;">"Your Reality" text — hold</span></li>
+        <li><span class="bullet" style="color:#4ECCA3;">›</span><span style="color:#aaa;">Branded outro + CTA</span></li>
+        <li><span class="bullet" style="color:#4ECCA3;">›</span><span style="color:#aaa;">"Book your consultation"</span></li>
+      </ul>
+      <div class="act-tag" style="color:rgba(78,204,163,.5);">YOUR REALITY</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 03: MRIDUL'S DIRECTION ── -->
+  <div class="sec-label"><span>03</span>MRIDUL'S EXACT DIRECTION</div>
+
+  <div class="directions-grid">
+    <div class="direction-card" style="border-left:3px solid #C9A96E;">
+      <div class="dir-num" style="color:rgba(201,169,110,.5);">DIRECTIVE 01</div>
+      <div class="dir-quote">"futuristic rather than realistic"</div>
+      <div class="dir-context">The middle frame should feel engineered / sci-fi — not a natural photo. Think biomechanical scan, not beauty editorial.</div>
+    </div>
+    <div class="direction-card" style="border-left:3px solid #E84393;">
+      <div class="dir-num" style="color:rgba(232,67,147,.5);">DIRECTIVE 02</div>
+      <div class="dir-quote">"no Maxoris/Celesta references at all, no peptide colors in veins"</div>
+      <div class="dir-context">Use sitemap as reference — brand identity must be visible in the animation. Fix this.</div>
+    </div>
+    <div class="direction-card" style="border-left:3px solid #00D4FF;">
+      <div class="dir-num" style="color:rgba(0,212,255,.5);">DIRECTIVE 03</div>
+      <div class="dir-quote">"Use zones also if possible"</div>
+      <div class="dir-context">Broweon™ · Zygmara™ · Syntorq™ — zone names as futuristic UI callouts overlaid on the body during the transformation frame.</div>
+    </div>
+    <div class="direction-card" style="border-left:3px solid #D4AF7F;">
+      <div class="dir-num" style="color:rgba(212,175,127,.5);">DIRECTIVE 04</div>
+      <div class="dir-quote">"Before → Celesta → After"</div>
+      <div class="dir-context">The core format. The brand IS the transformation — it's not decoration, it's the middle act. Mridul shared a Celesta transition reel as the reference.</div>
+    </div>
+    <div class="direction-card" style="border-left:3px solid #6C63FF;">
+      <div class="dir-num" style="color:rgba(108,99,255,.5);">DIRECTIVE 05</div>
+      <div class="dir-quote">"we need ulta version of his insta ideas"</div>
+      <div class="dir-context">Study Dr. Emer's Instagram @jasonemermd. Then make it 10× more elevated, futuristic, and brand-true. Not a copy — an upgrade.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── SITEMAP ALIGNMENT ── -->
+  <div class="sec-label"><span>03B</span>SITEMAP ALIGNMENT — MRIDUL'S REFERENCE DOC</div>
+  <div style="background:#0D0D0D;border:1px solid rgba(201,169,110,.15);padding:20px 24px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:#C9A96E;flex-shrink:0;">✓</span>
+    <div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.15em;color:#C9A96E;margin-bottom:4px;">PLAN IS SITEMAP-ALIGNED</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6A6A6A;line-height:1.7;">Reviewed <code style="color:#C9A96E;">docs/client-guidelines/sitemap-brand-architecture-v2.md</code>. The plan below reflects the 5 mandates from the sitemap doc.</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:72px;">
+    <div style="background:#111;border:1px solid #1D1D1D;border-left:2px solid #C9A96E;padding:18px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#8A6E3A;margin-bottom:6px;">SITEMAP § OVERVIEW</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:#F0F0F0;margin-bottom:8px;">"Every layer emphasizes visual storytelling — before/after morphs, cinematic videos"</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#6A6A6A;line-height:1.6;">The sitemap explicitly mandates before/after morphing + cinematic video as <em>core</em> to the patient journey — this is exactly EM-60's format.</div>
+    </div>
+    <div style="background:#111;border:1px solid #1D1D1D;border-left:2px solid #C9A96E;padding:18px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#8A6E3A;margin-bottom:6px;">SITEMAP § MAXORIS / CELESTA FACE</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:#F0F0F0;margin-bottom:8px;">"Interactive face maps highlight key zones — hovering reveals procedures per area"</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#6A6A6A;line-height:1.6;">The zone overlay in Act 2 <strong style="color:#F0F0F0;">must feel like the sitemap's zone map UI</strong> — floating callouts (Broweon, Zygmara, Orbita) in a diagnostic HUD grid. Not abstract glows.</div>
+    </div>
+    <div style="background:#111;border:1px solid #1D1D1D;border-left:2px solid #C9A96E;padding:18px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#8A6E3A;margin-bottom:6px;">SITEMAP § VISUAL IDENTITY</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:#F0F0F0;margin-bottom:8px;">"Unified cinematic visual style — high-definition imagery, dramatic lighting, consistent brand colors"</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#6A6A6A;line-height:1.6;">MAXORIS = darker masculine tones, dramatic chiaroscuro. CELESTA = softer palette, soft bloom. Both must feel <em>engineered</em> and <em>futuristic</em>, not realistic.</div>
+    </div>
+    <div style="background:#111;border:1px solid #1D1D1D;border-left:2px solid #C9A96E;padding:18px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#8A6E3A;margin-bottom:6px;">SITEMAP § PATIENT FUNNEL LOGIC</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:#F0F0F0;margin-bottom:8px;">"Funnel: Awareness → Education → Proof → CTA"</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#6A6A6A;line-height:1.6;">The sitemap's patient journey arc maps 1:1 to the 3-act animation: Before (Awareness) → Brand Transformation (Education + Proof) → After (CTA).</div>
+    </div>
+    <div style="background:#111;border:1px solid #1D1D1D;border-left:2px solid rgba(255,77,77,.5);padding:18px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#FF4D4D;margin-bottom:6px;">CORRECTION vs. ORIGINAL BRIEF</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:#F0F0F0;margin-bottom:8px;">NO peptide-in-veins visual in the middle frame</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#6A6A6A;line-height:1.6;">Per Mridul: "no peptide colors in veins." Use sitemap zone-map HUD aesthetic instead — floating zone labels, scan grids, diagnostic overlays.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 04: BRAND SYSTEMS ── -->
+  <div class="sec-label"><span>04</span>BRAND SYSTEMS — SIDE BY SIDE</div>
+
+  <div class="brands-grid">
+    <!-- MAXORIS -->
+    <div class="brand-panel brand-maxoris">
+      <div class="brand-name" style="color:#C9A96E;">MAXORIS™</div>
+      <div class="brand-subtitle" style="color:#6A6A6A;">ENGINEERED MASCULINE ARCHETYPE</div>
+      <div class="swatches">
+        <div class="swatch"><div class="swatch-block" style="background:#1B1B1B;"></div><span class="swatch-hex" style="color:#4A4A4A;">#1B1B1B</span></div>
+        <div class="swatch"><div class="swatch-block" style="background:#4A4A4A;"></div><span class="swatch-hex" style="color:#4A4A4A;">#4A4A4A</span></div>
+        <div class="swatch"><div class="swatch-block" style="background:#F0F0F0;"></div><span class="swatch-hex" style="color:#4A4A4A;">#F0F0F0</span></div>
+        <div class="swatch"><div class="swatch-block" style="background:#C9A96E;"></div><span class="swatch-hex" style="color:#4A4A4A;">#C9A96E</span></div>
+      </div>
+      <div class="brand-attrs">
+        <div class="brand-attr"><div class="attr-key" style="color:#8A6E3A;">STYLE</div><div class="attr-val" style="color:#6A6A6A;">Angular · Geometric morphing · Hard light · Dramatic shadows</div></div>
+        <div class="brand-attr"><div class="attr-key" style="color:#8A6E3A;">MUSIC</div><div class="attr-val" style="color:#6A6A6A;">Deep bass · Industrial · Cinematic percussion · 90–110 BPM</div></div>
+        <div class="brand-attr"><div class="attr-key" style="color:#8A6E3A;">MORPH</div><div class="attr-val" style="color:#6A6A6A;">Deliberate, powerful · 2–3 sec hold frames on key features</div></div>
+      </div>
+      <div class="zone-section">
+        <div class="zone-label" style="color:#8A6E3A;">FACE ZONES</div>
+        <div class="zones">
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Broweon™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Orbita™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Zygmara™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Labrae™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Mentra™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Cervicona™</span>
+        </div>
+      </div>
+      <div class="zone-section">
+        <div class="zone-label" style="color:#8A6E3A;">BODY ZONES</div>
+        <div class="zones">
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Pectorix™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Syntorq™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Armaxia™</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">Gluteal Nova</span>
+          <span class="zone-pill" style="color:#C9A96E;border:1px solid rgba(201,169,110,.25);background:rgba(201,169,110,.05);">PhalloNox™</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CELESTA -->
+    <div class="brand-panel brand-celesta">
+      <div class="brand-name" style="color:#D4AF7F;">CELESTA™</div>
+      <div class="brand-subtitle" style="color:#7A6A5A;">ENGINEERED FEMININE ARCHETYPE</div>
+      <div class="swatches">
+        <div class="swatch"><div class="swatch-block" style="background:#FAF7F2;border-color:rgba(255,255,255,.05);"></div><span class="swatch-hex" style="color:#6A5A4A;">#FAF7F2</span></div>
+        <div class="swatch"><div class="swatch-block" style="background:#E8C4C4;"></div><span class="swatch-hex" style="color:#6A5A4A;">#E8C4C4</span></div>
+        <div class="swatch"><div class="swatch-block" style="background:#D4AF7F;"></div><span class="swatch-hex" style="color:#6A5A4A;">#D4AF7F</span></div>
+        <div class="swatch"><div class="swatch-block" style="background:#F5F0EB;border-color:rgba(255,255,255,.05);"></div><span class="swatch-hex" style="color:#6A5A4A;">#F5F0EB</span></div>
+      </div>
+      <div class="brand-attrs">
+        <div class="brand-attr"><div class="attr-key" style="color:#8A7060;">STYLE</div><div class="attr-val" style="color:#7A6A5A;">Smooth dissolves · Soft blooms · Light particle overlays · Gentle easing</div></div>
+        <div class="brand-attr"><div class="attr-key" style="color:#8A7060;">MUSIC</div><div class="attr-val" style="color:#7A6A5A;">Ethereal pads · Soft piano · Ambient textures · 70–90 BPM</div></div>
+        <div class="brand-attr"><div class="attr-key" style="color:#8A7060;">MORPH</div><div class="attr-val" style="color:#7A6A5A;">Graceful, flowing · 2–4 sec with soft easing curves</div></div>
+      </div>
+      <div class="zone-section">
+        <div class="zone-label" style="color:#8A7060;">FACE ZONES</div>
+        <div class="zones">
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Broweon™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Orbita™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Zygmara™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Labrae™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Mentra™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Cervicona™</span>
+        </div>
+      </div>
+      <div class="zone-section">
+        <div class="zone-label" style="color:#8A7060;">BODY ZONES</div>
+        <div class="zones">
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Corevana™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Gluteal Nova</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Velvyx™</span>
+          <span class="zone-pill" style="color:#D4AF7F;border:1px solid rgba(212,175,127,.25);background:rgba(212,175,127,.06);">Divinity-XX™</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brand-warning">⚠ NEVER mix MAXORIS and CELESTA aesthetics in a single piece</div>
+
+  <!-- ── SECTION 05: TOOL STACK ── -->
+  <div class="sec-label"><span>05</span>TOOL STACK — 3-LAYER PIPELINE</div>
+
+  <div class="tool-layers">
+    <div class="tool-layer">
+      <div class="layer-label" style="background:rgba(78,204,163,.06);border-right-color:rgba(78,204,163,.2);">
+        <div class="layer-num" style="color:rgba(78,204,163,.25);">01</div>
+        <div class="layer-title" style="color:#4ECCA3;">IMAGE GEN</div>
+        <div class="layer-sub">Start / End Frames</div>
+      </div>
+      <div class="layer-items">
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">📁 Patient Photos</div><div class="layer-item-note">public/images/results/patients/ — real before + after</div></div>
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">🎨 Midjourney v6+</div><div class="layer-item-note">--cref for face preservation · --stylize 750 · brand middle frame</div></div>
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">🪪 InstantID</div><div class="layer-item-note">High-fidelity face-preserving style transfer via Replicate</div></div>
+      </div>
+    </div>
+    <div class="tool-layer">
+      <div class="layer-label" style="background:rgba(201,169,110,.06);border-right-color:rgba(201,169,110,.2);">
+        <div class="layer-num" style="color:rgba(201,169,110,.25);">02</div>
+        <div class="layer-title" style="color:#C9A96E;">VIDEO MORPH</div>
+        <div class="layer-sub">The Transformation</div>
+      </div>
+      <div class="layer-items">
+        <div class="layer-item" style="border-color:rgba(232,67,147,.25);background:rgba(232,67,147,.03);">
+          <div class="layer-item-name" style="color:#E84393;">⚡ KLING AI ← PRIMARY</div>
+          <div class="layer-item-note">Face-specific morphing · 3-keyframe (before / ideal / after) · your tool of choice</div>
+        </div>
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">🌊 Seedance 2.0</div><div class="layer-item-note">Up to 8 reference frames · more trajectory control · worth exploring</div></div>
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">✦ Higgsfield VFX</div><div class="layer-item-note">Body scan overlay · HUD zone callouts · futuristic VFX</div></div>
+      </div>
+    </div>
+    <div class="tool-layer">
+      <div class="layer-label" style="background:rgba(232,67,147,.06);border-right-color:rgba(232,67,147,.2);">
+        <div class="layer-num" style="color:rgba(232,67,147,.25);">03</div>
+        <div class="layer-title" style="color:#E84393;">ASSEMBLY</div>
+        <div class="layer-sub">Final Reel</div>
+      </div>
+      <div class="layer-items">
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">✂️ CapCut Pro</div><div class="layer-item-note">9:16 template · music sync · brand color grading · overlays</div></div>
+        <div class="layer-item"><div class="layer-item-name" style="color:#F0F0F0;">🎬 Branded Intro Card</div><div class="layer-item-note">MAXORIS: dark+gold · CELESTA: ivory+rose · archetype identifier</div></div>
+        <div class="layer-item" style="border-color:rgba(255,77,77,.2);background:rgba(255,77,77,.03);">
+          <div class="layer-item-name" style="color:#FF4D4D;">⚠️ Required Elements</div>
+          <div class="layer-item-note">Dr. Emer logo watermark + "AI-generated simulation — actual results may vary"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 06: SOURCE IMAGES ── -->
+  <div class="sec-label"><span>06</span>SOURCE IMAGES — AVAILABLE PATIENT PHOTOS</div>
+
+  <div class="tab-btns">
+    <button class="tab-btn" id="tab-max" onclick="switchTab('maxoris')" style="background:#C9A96E;color:#080808;border:1px solid transparent;">MAXORIS™</button>
+    <button class="tab-btn" id="tab-cel" onclick="switchTab('celesta')" style="background:transparent;color:#D4AF7F;border:1px solid rgba(212,175,127,.35);">CELESTA™</button>
+  </div>
+
+  <div id="patients-maxoris" class="patients-grid">
+    <div class="patient-card recommended" style="--accent:#C9A96E;">
+      <div class="patient-rec" style="background:#C9A96E;">★ PICK</div>
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#1a1510,#2a2015);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(201,169,110,.04) 0,rgba(201,169,110,.04) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#C9A96E;">JOS</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#C9A96E;">hernandez-jose</div><div class="patient-meta"><span class="patient-type">Face + Body</span><span class="patient-shots" style="color:#C9A96E;">20</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#131313,#1d1a15);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(201,169,110,.03) 0,rgba(201,169,110,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#888;">GRE</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A6E3A;">starr-greg</div><div class="patient-meta"><span class="patient-type">Face focused</span><span class="patient-shots" style="color:#8A6E3A;">16</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#121212,#1b1915);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(201,169,110,.03) 0,rgba(201,169,110,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#666;">KHA</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A6E3A;">khalid-raheel</div><div class="patient-meta"><span class="patient-type">Branded B/A</span><span class="patient-shots" style="color:#8A6E3A;">9</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#111,#1a1715);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(201,169,110,.03) 0,rgba(201,169,110,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#666;">DAN</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A6E3A;">balarezo-daniel</div><div class="patient-meta"><span class="patient-type">Multi-angle</span><span class="patient-shots" style="color:#8A6E3A;">11</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#111,#181614);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(201,169,110,.03) 0,rgba(201,169,110,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#555;">COC</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A6E3A;">cocco-stephen</div><div class="patient-meta"><span class="patient-type">B/A pairs</span><span class="patient-shots" style="color:#8A6E3A;">3</span></div></div>
+    </div>
+  </div>
+
+  <div id="patients-celesta" class="patients-grid" style="display:none;">
+    <div class="patient-card recommended" style="--accent:#D4AF7F;">
+      <div class="patient-rec" style="background:#D4AF7F;">★ PICK</div>
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#130f0d,#1e1713);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,175,127,.05) 0,rgba(212,175,127,.05) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#D4AF7F;">MAD</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#D4AF7F;">walsh-madison</div><div class="patient-meta"><span class="patient-type">Comprehensive</span><span class="patient-shots" style="color:#D4AF7F;">20</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#120f0e,#1c1510);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,175,127,.03) 0,rgba(212,175,127,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#8A7060;">TAM</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A7060;">tamayo-noelle</div><div class="patient-meta"><span class="patient-type">Multi-session</span><span class="patient-shots" style="color:#8A7060;">16</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#110f0e,#1b1410);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,175,127,.03) 0,rgba(212,175,127,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#7A6050;">RIO</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A7060;">rios-latanya</div><div class="patient-meta"><span class="patient-type">Multi-angle</span><span class="patient-shots" style="color:#8A7060;">13</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#11100e,#1a130f);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,175,127,.03) 0,rgba(212,175,127,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#6A5040;">CHE</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A7060;">chen-cindy</div><div class="patient-meta"><span class="patient-type">Face focused</span><span class="patient-shots" style="color:#8A7060;">11</span></div></div>
+    </div>
+    <div class="patient-card">
+      <div class="patient-thumb" style="background:linear-gradient(135deg,#100f0d,#19120e);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,175,127,.03) 0,rgba(212,175,127,.03) 1px,transparent 0,transparent 50%);background-size:10px 10px;"></div>
+        <div class="patient-thumb-label" style="color:#5A4030;">SAD</div>
+      </div>
+      <div class="patient-info"><div class="patient-name" style="color:#8A7060;">sadat-sonya</div><div class="patient-meta"><span class="patient-type">4 B/A + 4 tx</span><span class="patient-shots" style="color:#8A7060;">8</span></div></div>
+    </div>
+  </div>
+
+  <div class="path-note">
+    📁 Path: <span class="gold">public/images/results/patients/</span> · Brand art: <span class="gold">public/images/brand/maxoris-hero.jpg · maxoris-brand-art.jpg · celesta-quote.jpg</span>
+  </div>
+
+  <!-- ── SECTION 07: DELIVERABLES CHECKLIST ── -->
+  <div class="sec-label"><span>07</span>DELIVERABLES CHECKLIST</div>
+
+  <div class="check-stats">
+    <div class="check-stat" id="req-stat"><div class="check-stat-label">REQUIRED</div><div class="check-stat-num" id="req-count" style="color:#C9A96E;">0 / 8</div></div>
+    <div class="check-stat"><div class="check-stat-label">OPTIONAL</div><div class="check-stat-num" id="opt-count" style="color:#4A4A4A;">0 / 3</div></div>
+    <div class="progress-bar-wrap"><div class="check-stat-label">PROGRESS</div><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:0%;"></div></div></div>
+  </div>
+
+  <div class="checklist" id="checklist">
+    <!-- items injected by JS -->
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 08: MIDJOURNEY PROMPTS ── -->
+  <div class="sec-label"><span>08</span>MIDJOURNEY PROMPT REFERENCE</div>
+
+  <div class="prompts-grid">
+    <div class="prompt-card" style="background:#0D0D0D;border:1px solid rgba(201,169,110,.25);">
+      <div class="prompt-header" style="border-bottom-color:rgba(201,169,110,.15);">
+        <span class="prompt-name" style="color:#C9A96E;">MAXORIS™ MIDDLE FRAME</span>
+        <button class="copy-btn" id="copy-max" onclick="copyPrompt('max')" style="color:#C9A96E;border-color:rgba(201,169,110,.3);background:transparent;">COPY</button>
+      </div>
+      <div class="prompt-body" style="color:rgba(201,169,110,.8);" id="max-prompt">Portrait of [patient description], hyper-realistic digital art, cinematic lighting, dramatic chiaroscuro shadows, chiseled jawline, sculpted cheekbones, dark moody background, editorial male photography, angular geometric UI overlays showing BROWEON/ZYGMARA/MENTRA facial zones in gold, futuristic HUD zone map scan grid, MAXORIS™ wordmark, 8k detail --ar 9:16 --cref [patient URL] --stylize 750</div>
+    </div>
+    <div class="prompt-card" style="background:#100E0C;border:1px solid rgba(212,175,127,.25);">
+      <div class="prompt-header" style="border-bottom-color:rgba(212,175,127,.15);">
+        <span class="prompt-name" style="color:#D4AF7F;">CELESTA™ MIDDLE FRAME</span>
+        <button class="copy-btn" id="copy-cel" onclick="copyPrompt('cel')" style="color:#D4AF7F;border-color:rgba(212,175,127,.3);background:transparent;">COPY</button>
+      </div>
+      <div class="prompt-body" style="color:rgba(212,175,127,.8);" id="cel-prompt">Portrait of [patient description], ethereal beauty photography, soft diffused lighting, luminous porcelain skin, high cheekbones, elegant features, warm golden hour glow, fashion editorial, floating UI zone callouts showing ORBITA/ZYGMARA/LABRAE in rose gold, soft holographic zone scan overlay, CELESTA™ wordmark, clean pastel background, 8k detail --ar 9:16 --cref [patient URL] --stylize 750</div>
+    </div>
+  </div>
+
+  <div class="prompt-tips">
+    <span>💡 <span class="tip-gold">--cref [URL]</span> = face consistency</span>
+    <span>💡 <span class="tip-gold">--sref [code]</span> = lock style reference once approved</span>
+    <span>💡 <span class="tip-gold">--ar 9:16</span> = vertical reel format</span>
+    <span>💡 <span class="tip-gold">--stylize 750</span> = strong aesthetic interpretation</span>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer" style="margin-top:60px;">
+    <span>EM-60 · EM SPRINT 2 · FEB 16–23 2026 · OUTPUT: public/videos/</span>
+    <span>NO CODE · NO PIPELINE · SAMPLES ONLY · CLIENT APPROVAL</span>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  const checkItems = [
+    { id:1, text:"MAXORIS sample — male face transformation", note:"hernandez-jose or starr-greg", req:true },
+    { id:2, text:"CELESTA sample — female face transformation", note:"walsh-madison or sadat-sonya", req:true },
+    { id:3, text:"Zone overlays present in middle frame", note:"Broweon, Zygmara, Mentra, Syntorq, etc.", req:true },
+    { id:4, text:"Zone map HUD scan overlay in middle frame", note:"Sitemap-style interactive zone UI — NOT peptide veins", req:true },
+    { id:5, text:"MAXORIS or CELESTA wordmark visible", note:"In the brand transformation frame", req:true },
+    { id:6, text:"9:16 vertical format, 12–20 seconds", note:"Instagram Reels spec", req:true },
+    { id:7, text:"Futuristic (not realistic) aesthetic confirmed", note:"Confirmed by Mridul — sci-fi / engineered feel", req:true },
+    { id:8, text:"Drop files in public/videos/ in repo", note:"Folder already exists untracked", req:true },
+    { id:9, text:"MAXORIS body sample", note:"Syntorq / abs zone · optional", req:false },
+    { id:10, text:"CELESTA body sample", note:"Corevana / hourglass · optional", req:false },
+    { id:11, text:"5th wildcard sample", note:"Any archetype · optional", req:false },
+  ];
+
+  const state = {};
+  checkItems.forEach(i => state[i.id] = false);
+
+  function renderChecklist() {
+    const el = document.getElementById('checklist');
+    el.innerHTML = checkItems.map(item => `
+      <div class="check-item ${state[item.id] ? 'is-done' : ''}" onclick="toggle(${item.id})">
+        <div class="check-box ${state[item.id] ? 'is-done' : ''}">${state[item.id] ? '<span class="tick">✓</span>' : ''}</div>
+        <div class="check-text">
+          <div class="check-main ${state[item.id] ? 'done' : ''}">${item.text}</div>
+          <div class="check-note">${item.note}</div>
+        </div>
+        <span class="check-tag ${item.req ? 'tag-required' : 'tag-optional'}">${item.req ? 'REQUIRED' : 'OPTIONAL'}</span>
+      </div>
+    `).join('');
+    updateStats();
+  }
+
+  function toggle(id) {
+    state[id] = !state[id];
+    renderChecklist();
+  }
+
+  function updateStats() {
+    const req = checkItems.filter(i => i.req);
+    const opt = checkItems.filter(i => !i.req);
+    const doneReq = req.filter(i => state[i.id]).length;
+    const doneOpt = opt.filter(i => state[i.id]).length;
+    document.getElementById('req-count').textContent = doneReq + ' / ' + req.length;
+    document.getElementById('req-count').style.color = doneReq === req.length ? '#4ECCA3' : '#C9A96E';
+    document.getElementById('opt-count').textContent = doneOpt + ' / ' + opt.length;
+    document.getElementById('req-stat').classList.toggle('done-stat', doneReq === req.length);
+    document.getElementById('prog-fill').style.width = ((doneReq / req.length) * 100) + '%';
+  }
+
+  function switchTab(tab) {
+    document.getElementById('patients-maxoris').style.display = tab === 'maxoris' ? 'grid' : 'none';
+    document.getElementById('patients-celesta').style.display = tab === 'celesta' ? 'grid' : 'none';
+    document.getElementById('tab-max').style.background = tab === 'maxoris' ? '#C9A96E' : 'transparent';
+    document.getElementById('tab-max').style.color = tab === 'maxoris' ? '#080808' : '#C9A96E';
+    document.getElementById('tab-cel').style.background = tab === 'celesta' ? '#D4AF7F' : 'transparent';
+    document.getElementById('tab-cel').style.color = tab === 'celesta' ? '#080808' : '#D4AF7F';
+  }
+
+  function copyPrompt(which) {
+    const text = document.getElementById(which + '-prompt').textContent;
+    navigator.clipboard.writeText(text);
+    const btn = document.getElementById('copy-' + which);
+    btn.textContent = 'COPIED ✓';
+    btn.style.color = '#4ECCA3';
+    btn.style.borderColor = 'rgba(78,204,163,.4)';
+    setTimeout(() => {
+      btn.textContent = 'COPY';
+      btn.style.color = which === 'max' ? '#C9A96E' : '#D4AF7F';
+      btn.style.borderColor = which === 'max' ? 'rgba(201,169,110,.3)' : 'rgba(212,175,127,.3)';
+    }, 2000);
+  }
+
+  renderChecklist();
+</script>
+</body>
+</html>
